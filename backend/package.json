@@ -1,0 +1,35 @@
+{
+  "name": "backend",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
+    "@types/morgan": "^1.9.10",
+    "nodemon": "^3.1.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@arcjet/bun": "^1.0.0-beta.14",
+    "@arcjet/inspect": "^1.0.0-beta.14",
+    "@arcjet/node": "^1.0.0-beta.14",
+    "@sendgrid/mail": "^8.1.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3",
+    "morgan": "^1.10.1",
+    "zod": "^4.1.12",
+    "zod-express-middleware": "^1.4.0"
+  },
+  "scripts": {
+    "dev": "nodemon --exec bun run index.ts"
+  }
+}
