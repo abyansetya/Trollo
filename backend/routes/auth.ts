@@ -44,10 +44,10 @@ router.post(
 );
 
 router.post(
-  "reset-password-request",
+  "/reset-password-request",
   validateRequest({
     body: z.object({
-      email: z.string().email(),
+      email: z.string().email("Invalid email address"),
     }),
   }),
   resetPasswordRequest

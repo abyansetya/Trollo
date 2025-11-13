@@ -319,11 +319,18 @@ const verifyResetPasswordTokenAndResetPassword = async (
     const hashPassword = await bcrypt.hash(newPassword, salt);
 
     user.password = hashPassword;
-    await user.save;
+    await user.save();
 
     await Verification.findByIdAndDelete(verification._id);
-    res.status(400).json({ message: "Password reset successfully" });
+    res.status(200).json({ message: "Password reset successfullyz`" });
   } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: "Token expired" });
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
