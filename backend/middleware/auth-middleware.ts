@@ -1,0 +1,49 @@
+import jwt from "jsonwebtoken";
+import User from "../models/user";
+import type { NextFunction, Request, Response } from "express";
+
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader =
+      req.headers["authorization"] || req.headers["Authorization"];
+
+    if (!authHeader || typeof authHeader !== "string") {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    ) as jwt.JwtPayload & {
+      userId: string;
+    };
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export default authMiddleware;

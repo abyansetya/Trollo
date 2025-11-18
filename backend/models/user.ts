@@ -1,6 +1,20 @@
 import mongoose, { Schema } from "mongoose";
 
-const userSchema = new Schema(
+// 👉 Tambahkan interface TypeScript untuk user
+export interface UserDocument extends Document {
+  _id: string; // override ObjectId → string for TS
+  email: string;
+  password: string;
+  name: string;
+  profilePicture?: string;
+  isEmailVerified: boolean;
+  lastLogin?: Date;
+  is2FAEnabled: boolean;
+  twoFAOtp?: string;
+  twoFAOtpExpired?: Date;
+}
+
+const userSchema = new Schema<UserDocument>(
   {
     email: {
       type: String,
@@ -29,6 +43,6 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<UserDocument>("User", userSchema);
 
 export default User;
