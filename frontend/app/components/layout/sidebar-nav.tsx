@@ -45,7 +45,8 @@ const SidebarNav = ({
             variant={isActive ? "outline" : "ghost"}
             className={cn(
               "justify-start",
-              isActive && "bg-blue-800/20 text-blue-600 font-medium"
+              isActive &&
+                "bg-blue-800/20 text-blue-600 font-medium hover:bg-blue-800/20 hover:text-blue-600"
             )}
             onClick={handleClick}
           >

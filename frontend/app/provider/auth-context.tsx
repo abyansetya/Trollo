@@ -34,15 +34,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
-        if (!isPublicRoute) {
-          navigate("/sign-in");
-        }
       }
       setIsLoading(false);
     };
 
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated && !isPublicRoute) {
+        navigate("/sign-in");
+      }
+    }
+  }, [isLoading, isAuthenticated, currentPath]);
 
   useEffect(() => {
     const handleLogout = () => {
