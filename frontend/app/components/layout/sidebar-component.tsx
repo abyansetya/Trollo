@@ -111,9 +111,10 @@ const SidebarComponent = ({
           variant="ghost"
           size={isCollapsed ? "icon" : "default"}
           onClick={logout}
+          className="text-red-500 font-bold"
         >
           <LogOut className={cn("size-4", isCollapsed && "mr-6")} />
-          <span className="hidden md:block">logout</span>
+          <span className="hidden md:block">Logout</span>
         </Button>
       </div>
     </div>
