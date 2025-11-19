@@ -23,6 +23,7 @@ const workspaceModel = new Schema(
     },
     members: [
       {
+        _id: { type: Schema.Types.ObjectId, auto: true },
         user: { type: Schema.Types.ObjectId, ref: "User" },
         role: {
           type: String,

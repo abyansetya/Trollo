@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import Workspace from "../models/workspace";
+import Project from "../models/project";
 
 const createWorkspace = async (req: Request, res: Response) => {
   try {
@@ -31,7 +32,7 @@ const getWorkspaces = async (req: Request, res: Response) => {
   try {
     console.log("here");
     const workspaces = await Workspace.find({
-      "members.user": req.user!._id,
+      "members.user": req.user?._id,
     }).sort({ createdAt: -1 });
     console.log(workspaces);
     res.status(200).json(workspaces);
@@ -40,4 +41,54 @@ const getWorkspaces = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-export { createWorkspace, getWorkspaces };
+
+const getWorkspaceDetails = async (req: Request, res: Response) => {
+  try {
+    const { workspaceId } = req.params;
+    const workspace = await Workspace.findOne({
+      _id: workspaceId,
+      "members.user": req.user?._id,
+    }).populate("members.user", "name email profilePicture");
+
+    if (!workspace) {
+      return res.status(401).json({ message: "Workspace not found" });
+    }
+    res.status(200).json(workspace);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const getWorkspaceProjects = async (req: Request, res: Response) => {
+  try {
+    const { workspaceId } = req.params;
+    const workspace = await Workspace.findOne({
+      _id: workspaceId,
+      "members.user": req.user?._id,
+    }).populate("members.user", "name email profilePicture");
+
+    if (!workspace) {
+      return res.status(401).json({ message: "Workspace not found" });
+    }
+
+    const project = await Project.find({
+      workspace: workspaceId,
+      isArchieved: false,
+      members: { $in: [req.user?._id] },
+    })
+      .populate("tasks", "status")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ project, workspace });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export {
+  createWorkspace,
+  getWorkspaces,
+  getWorkspaceDetails,
+  getWorkspaceProjects,
+};
