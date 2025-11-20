@@ -1,3 +1,4 @@
+import ProjectList from "@/components/workspace/project-list";
 import WorkspaceHeader from "@/components/workspace/workspace-header";
 import { useGetWorkSpaceQuery } from "@/hooks/use-workspace";
 import { Loader } from "lucide-react";
@@ -35,6 +36,12 @@ const WorkspaceDetails = () => {
       <WorkspaceHeader
         workspace={data.workspace}
         members={data?.workspace?.members}
+        onCreateProject={() => setIsCreateProject(true)}
+      />
+
+      <ProjectList
+        workspaceId={workspaceId}
+        projects={data.projects}
         onCreateProject={() => setIsCreateProject(true)}
       />
     </div>
