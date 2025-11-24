@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
@@ -26,6 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import { Checkbox } from "../ui/checkbox";
 
 interface CreateProjectDialogProps {
   isOpen: boolean;
@@ -122,6 +129,232 @@ const CreateProjectDialog = ({
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start Date</FormLabel>
+                    <FormControl>
+                      <Popover modal={true}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={
+                              "w-full justify-start text-left font-normal" +
+                              (!field.value ? "text-muted-foreground" : "")
+                            }
+                          >
+                            <CalendarIcon className="size-4 mr-2" />
+                            {field.value ? (
+                              format(field.value, "PPPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent>
+                          <div className="h-[350px]">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) => {
+                                field.onChange(
+                                  date?.toISOString() || undefined
+                                );
+                              }}
+                            />
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Due Date</FormLabel>
+                    <FormControl>
+                      <Popover modal={true}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={
+                              "w-full justify-start text-left font-normal" +
+                              (!field.value ? "text-muted-foreground" : "")
+                            }
+                          >
+                            <CalendarIcon className="size-4 mr-2" />
+                            {field.value ? (
+                              format(field.value, "PPPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent>
+                          <div className="h-[350px]">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) => {
+                                field.onChange(
+                                  date?.toISOString() || undefined
+                                );
+                              }}
+                            />
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Tags separated by comma" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="members"
+              render={({ field }) => {
+                const selectedMembers = field.value || [];
+                return (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className="w-full justify-start text-left font-normal min-h-11"
+                          >
+                            {selectedMembers.length === 0 ? (
+                              <span>Select members</span>
+                            ) : selectedMembers.length <= 2 ? (
+                              selectedMembers.map((m) => {
+                                const member = workspaceMembers.find(
+                                  (wm) => wm.user._id === m.user
+                                );
+                                return `${member?.user.name} (${member?.role})`;
+                              })
+                            ) : (
+                              `${selectedMembers.length} members selected`
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-sm max-w-60 overflow-y-auto"
+                          align="start"
+                        >
+                          <div className="flex flex-col gap-2">
+                            {workspaceMembers.map((member) => {
+                              const selectedMember = selectedMembers.find(
+                                (m) => m.user === member.user._id
+                              );
+                              return (
+                                <div
+                                  key={member._id}
+                                  className="flex items-center gap-2 p-2 border rounded"
+                                >
+                                  <Checkbox
+                                    checked={!!selectedMember}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange([
+                                          ...selectedMembers,
+                                          {
+                                            user: member.user._id,
+                                            role: "contributor",
+                                          },
+                                        ]);
+                                      } else {
+                                        field.onChange(
+                                          selectedMembers.filter(
+                                            (m) => m.user !== member.user._id
+                                          )
+                                        );
+                                      }
+                                    }}
+                                    id={`member-${member.user._id}`}
+                                  />
+                                  <span className="truncate flex-1">
+                                    {member.user.name}
+                                  </span>
+
+                                  {selectedMember && (
+                                    <Select
+                                      value={selectedMember.role}
+                                      onValueChange={(role) => {
+                                        selectedMembers.map((m) =>
+                                          m.user === member.user._id
+                                            ? {
+                                                ...m,
+                                                role: role as
+                                                  | "contributor"
+                                                  | "manager"
+                                                  | "viewer",
+                                              }
+                                            : m
+                                        );
+                                      }}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select Role" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="manager">
+                                          Manager
+                                        </SelectItem>
+                                        <SelectItem value="contributor">
+                                          Contributor
+                                        </SelectItem>
+                                        <SelectItem value="viewer">
+                                          Viewer
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <DialogFooter>
+              <Button type="submit">Create Project</Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
