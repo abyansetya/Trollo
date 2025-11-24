@@ -1,3 +1,4 @@
+import CreateProjectDialog from "@/components/project/create-project";
 import ProjectList from "@/components/workspace/project-list";
 import WorkspaceHeader from "@/components/workspace/workspace-header";
 import { useGetWorkSpaceQuery } from "@/hooks/use-workspace";
@@ -43,6 +44,13 @@ const WorkspaceDetails = () => {
         workspaceId={workspaceId}
         projects={data.projects}
         onCreateProject={() => setIsCreateProject(true)}
+      />
+
+      <CreateProjectDialog
+        isOpen={isCreateProject}
+        onOpenChange={setIsCreateProject}
+        workspaceId={workspaceId}
+        workspaceMembers={data.workspace.members as any}
       />
     </div>
   );

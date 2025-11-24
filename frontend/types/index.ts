@@ -24,6 +24,14 @@ export interface Workspace {
   updatedAt: Date;
 }
 
+export enum ProjectStatus {
+  PLANNING = "Planning",
+  IN_PROGRESS = "In Progress",
+  ON_HOLD = "On Hold",
+  COMPLETED = "Completed",
+  CANCELLED = "Cancelled",
+}
+
 export interface Project {
   _id: string;
   title: string;
@@ -76,5 +84,12 @@ export interface Task {
   assignees: User[];
   subtasks?: Subtask[];
   watchers?: User[];
-  attachments: Attachment[];
+  attachments?: Attachment[];
+}
+
+export interface MemberProps {
+  _id: string;
+  user: User;
+  role: "admin" | "member" | "owner" | "viewer";
+  joinedAt: Date;
 }

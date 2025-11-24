@@ -37,3 +37,26 @@ export const workspaceSchema = z.object({
   color: z.string().min(3, "Color must be at least 3 characters"),
   description: z.string().optional(),
 });
+
+export const projectSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  description: z.string().optional(),
+  status: z.enum([
+    "Planning",
+    "In Progress",
+    "On Hold",
+    "Completed",
+    "Cancelled",
+  ]),
+  startDate: z.string().min(1, "Start date is required"),
+  dueDate: z.string().min(1, "Due date is required"),
+  members: z
+    .array(
+      z.object({
+        user: z.string(),
+        role: z.enum(["admin", "member", "owner", "viewer"]),
+      })
+    )
+    .optional(),
+  tags: z.string().optional(),
+});
