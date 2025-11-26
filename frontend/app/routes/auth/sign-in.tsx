@@ -25,6 +25,7 @@ import { Link, useNavigate } from "react-router";
 import { useLoginMutation } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { useAuth } from "@/provider/auth-context";
+import { Eye, EyeOff } from "lucide-react";
 
 type SigninFormData = z.infer<typeof signInSchema>;
 
@@ -40,6 +41,7 @@ const SignIn = () => {
   });
 
   const { mutate, isPending } = useLoginMutation();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const handleOnSubmit = (values: SigninFormData) => {
     mutate(values, {
@@ -98,11 +100,24 @@ const SignIn = () => {
                     <FormLabel>Password</FormLabel>
 
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="********"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="********"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={18} />
+                          ) : (
+                            <Eye size={18} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <div className="flex justify-between ">
                       <FormMessage />
