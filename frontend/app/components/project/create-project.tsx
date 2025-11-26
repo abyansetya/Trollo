@@ -33,6 +33,8 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { Checkbox } from "../ui/checkbox";
+import { UseCreateProject } from "@/hooks/use-project";
+import { toast } from "sonner";
 
 interface CreateProjectDialogProps {
   isOpen: boolean;
@@ -62,8 +64,29 @@ const CreateProjectDialog = ({
     },
   });
 
-  const onSubmit = (data: CreateProjectFormData) => {
-    console.log(data);
+  const { mutate, isPending } = UseCreateProject();
+
+  const onSubmit = (values: CreateProjectFormData) => {
+    if (!workspaceId) return;
+    console.log(values);
+    mutate(
+      {
+        projectData: values,
+        workspaceId,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Project created successfully");
+          form.reset();
+          onOpenChange(false);
+        },
+        onError(error: any) {
+          const errorMessage = error.response.data.message;
+          toast.error(errorMessage);
+          console.log(error);
+        },
+      }
+    );
   };
 
   return (
@@ -129,7 +152,7 @@ const CreateProjectDialog = ({
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid  gap-4">
               <FormField
                 control={form.control}
                 name="startDate"
@@ -146,7 +169,7 @@ const CreateProjectDialog = ({
                               (!field.value ? "text-muted-foreground" : "")
                             }
                           >
-                            <CalendarIcon className="size-4 mr-2" />
+                            <CalendarIcon className="size-4 mr-2 text-wrap" />
                             {field.value ? (
                               format(field.value, "PPPP")
                             ) : (
@@ -245,7 +268,7 @@ const CreateProjectDialog = ({
                 const selectedMembers = field.value || [];
                 return (
                   <FormItem>
-                    <FormLabel>Tags</FormLabel>
+                    <FormLabel>Members</FormLabel>
                     <FormControl>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -353,7 +376,9 @@ const CreateProjectDialog = ({
             />
 
             <DialogFooter>
-              <Button type="submit">Create Project</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creating" : "Create Project"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
