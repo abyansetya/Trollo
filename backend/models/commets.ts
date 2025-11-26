@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { required } from "zod/mini";
 
 const commentSchema = new Schema(
@@ -67,6 +67,6 @@ const commentSchema = new Schema(
   { timestamps: true }
 );
 
-const Comment = model("Comment", commentSchema);
+const Comment = mongoose.model("Comment", commentSchema);
 
 export default Comment;

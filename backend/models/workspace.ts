@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { required, trim } from "zod/mini";
 
 const workspaceModel = new Schema(
@@ -38,6 +38,6 @@ const workspaceModel = new Schema(
   { timestamps: true }
 );
 
-const Workspace = model("Workspace", workspaceModel);
+const Workspace = mongoose.model("Workspace", workspaceModel);
 
 export default Workspace;

@@ -38,11 +38,14 @@ const authMiddleware = async (
     }
     req.user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
+
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 

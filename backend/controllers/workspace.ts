@@ -55,6 +55,7 @@ const getWorkspaceDetails = async (req: Request, res: Response) => {
     }
     res.status(200).json(workspace);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -70,16 +71,17 @@ const getWorkspaceProjects = async (req: Request, res: Response) => {
     if (!workspace) {
       return res.status(401).json({ message: "Workspace not found" });
     }
-
+    console.log(workspaceId);
+    console.log(req.user?._id);
     const project = await Project.find({
       workspace: workspaceId,
       isArchieved: false,
-      members: { $in: [req.user?._id] },
+      "members.user": req.user?._id,
     })
-      .populate("tasks", "status")
+      // .populate("tasks", "status")
       .sort({ createdAt: -1 });
-
-    res.status(200).json({ project, workspace });
+    console.log(project);
+    res.status(200).json({ projects: project, workspace });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
