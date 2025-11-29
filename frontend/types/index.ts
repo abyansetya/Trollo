@@ -36,12 +36,12 @@ export interface Project {
   _id: string;
   title: string;
   description?: string;
-  status: "Planning" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
+  status: ProjectStatus;
   workspace: Workspace;
   startDate: Date;
   dueDate: Date;
   progress: number;
-  task: Task[];
+  tasks: Task[];
   members: {
     user: User;
     role: "manager" | "contributor" | "viewer";
